@@ -2,26 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>3D model in AR</title>
+  <title>Experience Your Design in AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    body { text-align: center; font-family: sans-serif; margin-top: 50px; }
+    /* Примена на Montserrat */
+    body, h1, button {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      text-align: center;
+      margin-top: 50px;
+      color: #333;
+    }
+
+    h1 {
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    model-viewer {
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      margin-bottom: 24px;
+    }
+
     button {
-      display: block;
-      margin: 12px auto;
-      font-size: 18px;
-      padding: 12px 24px;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 28px;
       border: none;
       border-radius: 8px;
-      background-color: #333;
-      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
       cursor: pointer;
-      width: 200px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
     }
   </style>
 </head>
 <body>
-<h1>3D models во AR</h1>
+<h1>Experience Your Design in AR</h1>
 
 <model-viewer id="viewer"
               alt="3D model"
@@ -34,10 +73,7 @@
               exposure="1.0">
 </model-viewer>
 
-<!-- Копчиња за избор на модел -->
-<button id="btn-house">House</button>
-<button id="btn-kitchen">Kitchen</button>
-<button id="btn-kids">Kids Room</button>
+<button id="ar-button">Launch AR Experience</button>
 
 <script>
   const viewer = document.getElementById('viewer');
@@ -45,35 +81,22 @@
   const isAndroid = /android/i.test(userAgent);
   const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-  // Функција која го менува моделот во <model-viewer>
-  function loadModel(glbPath, usdzPath) {
-    if (isIOS) {
-      viewer.setAttribute("ios-src", usdzPath);
-      viewer.setAttribute("src", glbPath); // fallback
-    } else {
-      viewer.setAttribute("src", glbPath);
-    }
+  // Dynamically load correct model for platform
+  if (isIOS) {
+    viewer.setAttribute("ios-src", "KidsRoom.usdz");
+    viewer.setAttribute("src", "KidsRoom.glb");
+  } else {
+    viewer.setAttribute("src", "KidsRoom.glb");
   }
 
-  // Слушачи на клик за секое копче
-  document.getElementById('btn-house').addEventListener('click', () => {
-    loadModel('House1.glb', 'House1.usdz');
-  });
-
-  document.getElementById('btn-kitchen').addEventListener('click', () => {
-    loadModel('Kitchen.glb', 'Kitchen.usdz');
-  });
-
-  document.getElementById('btn-kids').addEventListener('click', () => {
-    loadModel('ChildrenRoom.glb', 'ChildrenRoom.usdz');
-  });
-
-  // Овозможи AR при клик врз табличката за преглед (само ако треба)
-  document.querySelector('model-viewer').addEventListener('click', () => {
-    if (typeof viewer.activateAR === 'function') {
+  // Trigger AR on button click
+  document.getElementById('ar-button').onclick = () => {
+    if (viewer && typeof viewer.activateAR === 'function') {
       viewer.activateAR();
+    } else {
+      alert("AR not supported or model not loaded.");
     }
-  });
+  };
 </script>
 </body>
 </html>
