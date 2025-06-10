@@ -4,12 +4,8 @@
   <meta charset="UTF-8">
   <title>Experience Your Design in AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
-    /* Примена на Montserrat */
     body, h1, button {
       font-family: 'Montserrat', sans-serif;
     }
@@ -25,11 +21,13 @@
       margin-bottom: 24px;
     }
 
-    model-viewer {
-      width: 100%;
+    /* Центрирање на контейнерот */
+    model-viewer#viewer {
+      display: block;
+      width: 80%;
       max-width: 600px;
       height: 400px;
-      margin-bottom: 24px;
+      margin: 0 auto 24px;
     }
 
     button {
@@ -77,25 +75,19 @@
 
 <script>
   const viewer = document.getElementById('viewer');
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  const isAndroid = /android/i.test(userAgent);
-  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isiOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
 
-  // Dynamically load correct model for platform
-  if (isIOS) {
-    viewer.setAttribute("ios-src", "KidsRoom.usdz");
-    viewer.setAttribute("src", "KidsRoom.glb");
+  if (isiOS) {
+    viewer.setAttribute('ios-src', 'KidsRoom.usdz');
+    viewer.setAttribute('src', 'KidsRoom.glb');
   } else {
-    viewer.setAttribute("src", "KidsRoom.glb");
+    viewer.setAttribute('src', 'KidsRoom.glb');
   }
 
-  // Trigger AR on button click
   document.getElementById('ar-button').onclick = () => {
-    if (viewer && typeof viewer.activateAR === 'function') {
-      viewer.activateAR();
-    } else {
-      alert("AR not supported or model not loaded.");
-    }
+    if (viewer.activateAR) viewer.activateAR();
+    else alert('AR not supported or model not loaded.');
   };
 </script>
 </body>
