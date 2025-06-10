@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D model in AR</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body { text-align: center; font-family: sans-serif; margin-top: 50px; }
+    button {
+      display: block;
+      margin: 12px auto;
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+<h1>3D модели во AR</h1>
+
+<model-viewer id="viewer"
+              alt="3D model"
+              ar
+              ar-modes="webxr scene-viewer fallback"
+              ar-placement="floor"
+              camera-controls
+              auto-rotate
+              environment-image="neutral"
+              exposure="1.0">
+</model-viewer>
+
+<!-- Копчиња за избор на модел -->
+<button id="btn-house">House</button>
+<button id="btn-kitchen">Kitchen</button>
+<button id="btn-kids">Kids Room</button>
+
+<script>
+  const viewer = document.getElementById('viewer');
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  const isAndroid = /android/i.test(userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+  // Функција која го менува моделот во <model-viewer>
+  function loadModel(glbPath, usdzPath) {
+    if (isIOS) {
+      viewer.setAttribute("ios-src", usdzPath);
+      viewer.setAttribute("src", glbPath); // fallback
+    } else {
+      viewer.setAttribute("src", glbPath);
+    }
+  }
+
+  // Слушачи на клик за секое копче
+  document.getElementById('btn-house').addEventListener('click', () => {
+    loadModel('House1.glb', 'House1.usdz');
+  });
+
+  document.getElementById('btn-kitchen').addEventListener('click', () => {
+    loadModel('Kitchen.glb', 'Kitchen.usdz');
+  });
+
+  document.getElementById('btn-kids').addEventListener('click', () => {
+    loadModel('ChildrenRoom.glb', 'ChildrenRoom.usdz');
+  });
+
+  // Овозможи AR при клик врз табличката за преглед (само ако треба)
+  document.querySelector('model-viewer').addEventListener('click', () => {
+    if (typeof viewer.activateAR === 'function') {
+      viewer.activateAR();
+    }
+  });
+</script>
+</body>
+</html>
